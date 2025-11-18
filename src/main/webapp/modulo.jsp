@@ -93,7 +93,7 @@
                         <label class="form-check-label" for="rememberAlumno">Recordarme</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <div class="g-recaptcha" data-sitekey="6LeyNfErAAAAAEmZoDJm_baOSM_hhxF-7C2Mk2hx"></div>
+                        <div class="g-recaptcha" data-sitekey="6LfURxAsAAAAAEZom8v7kwyvgfscpCANPK1Wf-WD"></div>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión</button>
@@ -133,7 +133,7 @@
                         <label class="form-check-label" for="rememberProfesor">Recordarme</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <div class="g-recaptcha" data-sitekey="6LeyNfErAAAAAEmZoDJm_baOSM_hhxF-7C2Mk2hx"></div>
+                        <div class="g-recaptcha" data-sitekey="6LfURxAsAAAAAEZom8v7kwyvgfscpCANPK1Wf-WD"></div>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-info"><i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión</button>
@@ -173,7 +173,7 @@
                         <label class="form-check-label" for="rememberApoderado">Recordarme</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <div class="g-recaptcha" data-sitekey="6LeyNfErAAAAAEmZoDJm_baOSM_hhxF-7C2Mk2hx"></div>
+                        <div class="g-recaptcha" data-sitekey="6LfURxAsAAAAAEZom8v7kwyvgfscpCANPK1Wf-WD"></div>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-warning text-dark"><i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión</button>
@@ -212,7 +212,7 @@
                         <label class="form-check-label" for="rememberAdmin">Recordarme</label>
                     </div>
                     <div class="mb-3 text-center">
-                        <div class="g-recaptcha" data-sitekey="6LeyNfErAAAAAEmZoDJm_baOSM_hhxF-7C2Mk2hx"></div>
+                        <div class="g-recaptcha" data-sitekey="6LfURxAsAAAAAEZom8v7kwyvgfscpCANPK1Wf-WD"></div>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión</button>
