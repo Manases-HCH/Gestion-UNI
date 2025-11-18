@@ -83,8 +83,6 @@ public class AuthFilter implements Filter {
 
         session.setAttribute("lastActivity", System.currentTimeMillis());
         chain.doFilter(request, response);
-
-        chain.doFilter(request, response);
     }
 
     // 🔍 Verifica si es ruta pública
