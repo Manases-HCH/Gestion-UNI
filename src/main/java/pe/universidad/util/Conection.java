@@ -5,7 +5,21 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 public class Conection {
     private Connection cnx;
-
+    /*
+    public Connection conecta() throws ClassNotFoundException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String usr = "root";
+            String psw = "";
+            String url = "jdbc:mysql://localhost:3306/bduni";
+            cnx = DriverManager.getConnection(url, usr, psw);
+            return cnx;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+*/
     public Connection conecta() throws ClassNotFoundException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -15,7 +29,13 @@ public class Conection {
             String database = "railway";
             String user = "root";
             String password = "WqtWQlNBfsYwEputBlISihwPziyRWCfI";
-
+            /*
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + database
+                + "?sslMode=REQUIRED"
+                + "&allowPublicKeyRetrieval=true"
+                + "&autoReconnect=true"
+                + "&serverTimezone=UTC";
+            /*       */
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database
                     + "?allowPublicKeyRetrieval=true"
                     + "&useSSL=false"
