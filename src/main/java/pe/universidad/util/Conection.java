@@ -29,19 +29,19 @@ public class Conection {
             String database = "railway";
             String user = "root";
             String password = "WqtWQlNBfsYwEputBlISihwPziyRWCfI";
-            /*
+            
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database
                 + "?sslMode=REQUIRED"
                 + "&allowPublicKeyRetrieval=true"
                 + "&autoReconnect=true"
                 + "&serverTimezone=UTC";
-            /*       */
+            /*/*       
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database
                     + "?allowPublicKeyRetrieval=true"
                     + "&useSSL=false"
                     + "&requireSSL=false"
                     + "&serverTimezone=UTC";
-
+*/
             cnx = DriverManager.getConnection(url, user, password);
             System.out.println("✔ Conexión Exitosa");
             return cnx;
