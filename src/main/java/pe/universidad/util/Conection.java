@@ -31,10 +31,11 @@ public class Conection {
             String password = "WqtWQlNBfsYwEputBlISihwPziyRWCfI";
             
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database
-                + "?sslMode=REQUIRED"
+                + "?useSSL=true"
+                + "&requireSSL=true"
                 + "&allowPublicKeyRetrieval=true"
-                + "&autoReconnect=true"
                 + "&serverTimezone=UTC";
+
              /*     
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database
                     + "?allowPublicKeyRetrieval=true"
