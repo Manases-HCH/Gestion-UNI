@@ -5,7 +5,7 @@
     import java.sql.SQLException;
     public class Conection {
         private Connection cnx;
-        
+        /*
         public Connection conecta() throws ClassNotFoundException {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -47,7 +47,7 @@
             }
         }
 */
-        /*
+        
         public Connection conecta() throws ClassNotFoundException {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -84,7 +84,7 @@
                 return null;
             }
         }
-        */
+        
         public int pruebaConexion() throws ClassNotFoundException {
             Connection c = conecta();
             return (c != null) ? 1 : 0;
