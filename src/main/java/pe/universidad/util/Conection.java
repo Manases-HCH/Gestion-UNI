@@ -11,7 +11,7 @@
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 String usr = "root";
                 String psw = "";
-                String url = "jdbc:mysql://localhost:3306/bduni";
+                String url = "jdbc:mysql://localhost:3306/bd-uni";
                 cnx = DriverManager.getConnection(url, usr, psw);
                 return cnx;
             } catch (SQLException e) {
@@ -46,7 +46,8 @@
                 return null;
             }
         }
-        */
+*/
+        
         public Connection conecta() throws ClassNotFoundException {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
