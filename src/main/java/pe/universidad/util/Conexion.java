@@ -11,7 +11,7 @@ import java.sql.SQLException;
  */
 public class Conexion {
     private Connection cnx;
-    /*
+    
     public Connection conecta() throws ClassNotFoundException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -25,7 +25,7 @@ public class Conexion {
         }
         return null;
     }
-    *//*
+    /*
     public Connection conecta() throws ClassNotFoundException {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -52,7 +52,7 @@ public class Conexion {
                 return null;
             }
         }
-   */
+   *//*
     public Connection conecta() throws ClassNotFoundException {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -89,7 +89,7 @@ public class Conexion {
                 return null;
             }
         }
-    
+        */
     public int pruebaConexion() throws ClassNotFoundException {
         Connection c = conecta();
         if (c!= null) {

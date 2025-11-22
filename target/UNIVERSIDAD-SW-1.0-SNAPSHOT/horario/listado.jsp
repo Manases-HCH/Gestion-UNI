@@ -451,7 +451,7 @@
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
             responsive: true,
             columnDefs: [
-                { targets: 5, orderable: false } // Deshabilitar ordenamiento en columna de acciones (columna 5 para horarios)
+                { targets: 4, orderable: false } // Deshabilitar ordenamiento en columna de acciones (columna 5 para horarios)
             ],
             initComplete: function() {
                 // Agregar animación de entrada a las filas

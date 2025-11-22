@@ -455,7 +455,7 @@
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
             responsive: true,
             columnDefs: [
-                { targets: 3, orderable: false } // Deshabilitar ordenamiento en la columna de acciones (índice 3)
+                { targets: 2, orderable: false } // Deshabilitar ordenamiento en la columna de acciones (índice 3)
             ],
             initComplete: function() {
                 // Agregar animación de entrada a las filas
