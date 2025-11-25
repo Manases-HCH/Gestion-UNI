@@ -78,7 +78,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post">
+                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit('alumnoModal')">
                     <input type="hidden" name="userType" value="alumno">
                     <div class="mb-3">
                         <label for="alumnoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
@@ -118,7 +118,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post">
+               <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit('profesorModal')">
                     <input type="hidden" name="userType" value="profesor">
                     <div class="mb-3">
                         <label for="profesorUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario </label>
@@ -158,7 +158,7 @@
                 <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post">
+                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit('apoderadoModal')">
                     <input type="hidden" name="userType" value="apoderado">
                     <div class="mb-3">
                         <label for="apoderadoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
@@ -229,3 +229,19 @@
     </div>
 </div>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+<script>
+function hashPasswordBeforeSubmit(modalId) {
+    let passInput = document.querySelector(`#${modalId} input[name="password"]`);
+    let plain = passInput.value;
+
+    if (!plain || plain.trim() === "") return;
+
+    // Generar hash bcrypt
+    let salt = bcrypt.genSaltSync(10);
+    let hash = bcrypt.hashSync(plain, salt);
+
+    // Reemplazar el valor real por el hash
+    passInput.value = hash;
+}
+</script>
