@@ -94,7 +94,7 @@ public class LoginServlet extends HttpServlet {
                 String sql = "SELECT password FROM " + userType + "s WHERE email = ?";
                 pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, username);
-                rs = cstmt.executeQuery();
+                rs = pstmt.executeQuery();
                 if (rs.next()) {
                     hashBd = rs.getString("password");
                 }

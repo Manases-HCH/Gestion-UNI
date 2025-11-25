@@ -78,7 +78,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
+                <form action="loginServlet" method="post">
                     <input type="hidden" name="userType" value="alumno">
                     <div class="mb-3">
                         <label for="alumnoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
@@ -118,7 +118,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-               <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit('profesorModal')">
+                <form action="loginServlet" method="post">
                     <input type="hidden" name="userType" value="profesor">
                     <div class="mb-3">
                         <label for="profesorUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario </label>
@@ -158,7 +158,7 @@
                 <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit('apoderadoModal')">
+                <form action="loginServlet" method="post">
                     <input type="hidden" name="userType" value="apoderado">
                     <div class="mb-3">
                         <label for="apoderadoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
@@ -229,20 +229,3 @@
     </div>
 </div>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script>
-function hashPasswordBeforeSubmit(form) {
-    let passInput = form.querySelector('input[name="password"]');
-    let plain = passInput.value;
-
-    if (!plain.trim()) return;
-
-    const encoder = new TextEncoder();
-    const data = encoder.encode(plain);
-
-    return crypto.subtle.digest("SHA-256", data).then(hashBuffer => {
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        passInput.value = hashHex;
-    });
-}
-</script>
