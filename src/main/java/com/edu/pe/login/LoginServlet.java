@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String username = request.getParameter("username");
-        String passwordIngresada = request.getParameter("password");
+        String passwordIngresada = request.getParameter("secret");
         String userType = request.getParameter("userType");
 
         Connection conn = null;

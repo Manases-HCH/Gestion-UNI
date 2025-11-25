@@ -86,7 +86,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="alumnoPasswordModal" class="form-label"><i class="fas fa-lock me-2"></i> Contraseña</label>
-                        <input type="password" class="form-control" id="alumnoPasswordInput" name="password" placeholder="Ingrese su contraseña" required>
+                        <input type="password" class="form-control" id="alumnoPasswordInput" name="secret" placeholder="Ingrese su contraseña" required>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="rememberAlumno">
@@ -126,7 +126,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="profesorPasswordModal" class="form-label"><i class="fas fa-lock me-2"></i> Contraseña </label>
-                        <input type="password" class="form-control" id="profesorPasswordInput" name="password" placeholder="Ingrese su contraseña" required>
+                        <input type="password" class="form-control" id="profesorPasswordInput" name="secret" placeholder="Ingrese su contraseña" required>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="rememberProfesor">
@@ -166,7 +166,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="apoderadoPasswordModal" class="form-label"><i class="fas fa-lock me-2"></i> Contraseña</label>
-                        <input type="password" class="form-control" id="apoderadoPasswordInput" name="password" placeholder="Ingrese su contraseña" required>
+                        <input type="password" class="form-control" id="apoderadoPasswordInput" name="secret" placeholder="Ingrese su contraseña" required>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="rememberApoderado">
@@ -205,7 +205,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="adminPasswordModal" class="form-label"><i class="fas fa-lock me-2"></i> Contraseña </label>
-                        <input type="password" class="form-control" id="adminPasswordInput" name="password" placeholder="Ingrese su contraseña" required>
+                        <input type="password" class="form-control" id="adminPasswordInput" name="secret" placeholder="Ingrese su contraseña" required>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="rememberAdmin">
@@ -231,17 +231,16 @@
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
 
+
 <script>
 function hashPasswordBeforeSubmit(form) {
-    let passInput = form.querySelector("input[name='password']");
+    let passInput = form.querySelector("input[name='secret']");
     let plain = passInput.value;
 
-    if (!plain || plain.trim() === "") return;
-
-    // Generar hash
+    if (!plain.trim()) return;
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(plain, salt);
 
-    passInput.value = hash; // reemplaza la contraseña real
+    passInput.value = hash;
 }
 </script>
