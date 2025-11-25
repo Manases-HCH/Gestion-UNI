@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import org.mindrot.jbcrypt.BCrypt;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,6 +35,8 @@ public class LoginServlet extends HttpServlet {
         CallableStatement cstmt = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
+        String hashBd = null;
+
 
         try {
             Conection conexionUtil = new Conection();
@@ -86,12 +89,21 @@ public class LoginServlet extends HttpServlet {
                     return;
             }
 
-            cstmt.setString(1, username);
-            cstmt.setString(2, password);
-            cstmt.registerOutParameter(3, Types.BOOLEAN);
+                // === AUTENTICACIÓN CON HASH BCRYPT ===
+                String sql = "SELECT password FROM " + userType + "s WHERE email = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, username);
+                rs = pstmt.executeQuery();
 
-            cstmt.execute();
-            isAuthenticated = cstmt.getBoolean(3);
+                if (rs.next()) {
+                    hashBd = rs.getString("password");
+                }
+
+                // Comparar contraseña ingresada con el hash
+                if (hashBd != null) {
+                    isAuthenticated = BCrypt.checkpw(password, hashBd);
+                }
+
 
             // 🔹 3. Validar resultado de autenticación
             if (isAuthenticated) {
@@ -269,3 +281,4 @@ public class LoginServlet extends HttpServlet {
         }
     }
 }
+    
