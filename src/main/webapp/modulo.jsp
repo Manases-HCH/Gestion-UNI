@@ -78,7 +78,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit('alumnoModal')">
+                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
                     <input type="hidden" name="userType" value="alumno">
                     <div class="mb-3">
                         <label for="alumnoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
@@ -229,19 +229,20 @@
     </div>
 </div>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
 <script>
-function hashPasswordBeforeSubmit(modalId) {
-    let passInput = document.querySelector(`#${modalId} input[name="password"]`);
+function hashPasswordBeforeSubmit(form) {
+    let passInput = form.querySelector('input[name="password"]');
     let plain = passInput.value;
 
-    if (!plain || plain.trim() === "") return;
+    if (!plain.trim()) return;
 
-    // Generar hash bcrypt
-    let salt = bcrypt.genSaltSync(10);
-    let hash = bcrypt.hashSync(plain, salt);
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plain);
 
-    // Reemplazar el valor real por el hash
-    passInput.value = hash;
+    return crypto.subtle.digest("SHA-256", data).then(hashBuffer => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        passInput.value = hashHex;
+    });
 }
 </script>
