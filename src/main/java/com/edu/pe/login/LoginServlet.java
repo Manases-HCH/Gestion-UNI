@@ -71,7 +71,8 @@ public class LoginServlet extends HttpServlet {
             // 🔹 2. Seleccionar el procedimiento según tipo de usuario
             switch (userType) {
                 case "alumno":
-                    cstmt = conn.prepareCall("{CALL sp_authenticateAlumno(?, ?, ?)}");
+                    cstmt = conn.prepareCall("{CALL sp_authenticateAlumno(?)}");
+                    cstmt.setString(1, username);
                     break;
                 case "profesor":
                     cstmt = conn.prepareCall("{CALL sp_authenticateProfesor(?, ?, ?)}");
@@ -93,8 +94,7 @@ public class LoginServlet extends HttpServlet {
                 String sql = "SELECT password FROM " + userType + "s WHERE email = ?";
                 pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, username);
-                rs = pstmt.executeQuery();
-
+                rs = cstmt.executeQuery();
                 if (rs.next()) {
                     hashBd = rs.getString("password");
                 }
