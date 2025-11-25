@@ -197,7 +197,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
+                <form action="https://gestion-uni.onrender.com/loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
                     <input type="hidden" name="userType" value="admin">
                     <div class="mb-3">
                         <label for="adminUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario </label>
