@@ -113,7 +113,7 @@ public class LoginServlet extends HttpServlet {
             case "alumno": return "alumnos";
             case "profesor": return "profesores";
             case "apoderado": return "apoderados";
-            case "admin": return "admins"; // ⇦ CORREGIDO
+            case "admin": return "admin"; // ⇦ CORREGIDO
         }
         return null;
     }
@@ -178,7 +178,7 @@ public class LoginServlet extends HttpServlet {
                 attr = "id_apoderado";
                 break;
             case "admin":
-                sql = "SELECT id_admin FROM admins WHERE email = ?";
+                sql = "SELECT id_admin FROM admin WHERE email = ?";
                 attr = "id_admin";
                 break;
         }
