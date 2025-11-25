@@ -1,23 +1,15 @@
 package com.edu.pe.login;
 
 import java.io.IOException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 
 import pe.universidad.util.Conection;
-import pe.universidad.util.ErrorHandler; // ✅ Importamos nuestro manejador
+import pe.universidad.util.ErrorHandler;
 
 @WebServlet("/loginServlet")
 public class LoginServlet extends HttpServlet {
@@ -28,209 +20,92 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String passwordIngresada = request.getParameter("password");
         String userType = request.getParameter("userType");
 
         Connection conn = null;
         CallableStatement cstmt = null;
         ResultSet rs = null;
-        PreparedStatement pstmt = null;
-        String hashBd = null;
-
 
         try {
+            // Conexión
             Conection conexionUtil = new Conection();
             conn = conexionUtil.conecta();
 
-            // 🔹 1. Verificar estado de cuenta
-            String estadoCuenta = obtenerEstadoCuenta(conn, username, userType);
-
-            if (estadoCuenta == null) {
-                HttpSession session = request.getSession();
-                session.setAttribute("loginError", "Credenciales inválidas. Intente nuevamente.");
-                response.sendRedirect("Plataforma.jsp");
+            // Validar existencia de cuenta
+            if (obtenerEstadoCuenta(conn, username, userType) == null) {
+                error(request, response, "Credenciales inválidas.");
                 return;
             }
 
-            if ("inactivo".equalsIgnoreCase(estadoCuenta)) {
-                HttpSession session = request.getSession();
-                session.setAttribute("loginError", "Tu cuenta ha sido bloqueada. Contacta al administrador.");
-                response.sendRedirect("Plataforma.jsp");
+            // Validar si está inactivo
+            if ("inactivo".equalsIgnoreCase(obtenerEstadoCuenta(conn, username, userType))) {
+                error(request, response, "Tu cuenta ha sido bloqueada. Contacta al administrador.");
                 return;
             }
 
+            // Validar intentos restantes
             if (!verificarIntentosDisponibles(conn, username, userType)) {
-                HttpSession session = request.getSession();
-                session.setAttribute("loginError", "Has superado el número máximo de intentos. Tu cuenta ha sido bloqueada temporalmente.");
-                response.sendRedirect("Plataforma.jsp");
+                error(request, response, "Has superado el número de intentos. Tu cuenta ha sido bloqueada.");
                 return;
+            }
+
+            // === CONSULTAR PASSWORD HASH ===
+            String sql = "SELECT password FROM " + getTableName(userType) + " WHERE email = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, username);
+            rs = pstmt.executeQuery();
+
+            String hashBd = null;
+            if (rs.next()) {
+                hashBd = rs.getString("password");
             }
 
             boolean isAuthenticated = false;
 
-            // 🔹 2. Seleccionar el procedimiento según tipo de usuario
-            switch (userType) {
-                case "alumno":
-                    cstmt = conn.prepareCall("{CALL sp_authenticateAlumno(?)}");
-                    cstmt.setString(1, username);
-                    break;
-                case "profesor":
-                    cstmt = conn.prepareCall("{CALL sp_authenticateProfesor(?, ?, ?)}");
-                    break;
-                case "apoderado":
-                    cstmt = conn.prepareCall("{CALL sp_authenticateApoderado(?, ?, ?)}");
-                    break;
-                case "admin":
-                    cstmt = conn.prepareCall("{CALL sp_authenticateAdmin(?, ?, ?)}");
-                    break;
-                default:
-                    HttpSession session = request.getSession();
-                    session.setAttribute("loginError", "Rol de usuario desconocido.");
-                    response.sendRedirect("Plataforma.jsp");
-                    return;
+            if (hashBd != null) {
+                // Comparar hash bcrypt
+                isAuthenticated = BCrypt.checkpw(passwordIngresada, hashBd);
             }
 
-                // === AUTENTICACIÓN CON HASH BCRYPT ===
-                String sql = "SELECT password FROM " + userType + "s WHERE email = ?";
-                pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, username);
-                rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    hashBd = rs.getString("password");
-                }
-
-                // Comparar contraseña ingresada con el hash
-                if (hashBd != null) {
-                    isAuthenticated = BCrypt.checkpw(password, hashBd);
-                }
-
-
-            // 🔹 3. Validar resultado de autenticación
+            // Resultado
             if (isAuthenticated) {
                 reiniciarIntentos(conn, username, userType);
+
                 HttpSession session = request.getSession();
                 session.setAttribute("email", username);
                 session.setAttribute("rol", userType);
+
                 obtenerYGuardarIdUsuario(conn, session, username, userType);
 
-                switch (userType) {
-                    case "alumno":
-                        response.sendRedirect("INTERFAZ_ALUMNO/home_alumno.jsp");
-                        break;
-                    case "profesor":
-                        response.sendRedirect("INTERFAZ_PROFESOR/home_profesor.jsp");
-                        break;
-                    case "apoderado":
-                        response.sendRedirect("INTERFAZ_APODERADO/home_apoderado.jsp");
-                        break;
-                    case "admin":
-                        response.sendRedirect("inicio.jsp");
-                        break;
-                }
+                redirigirSegunRol(response, userType);
+
             } else {
-                int intentosRestantes = reducirIntentos(conn, username, userType);
-                HttpSession session = request.getSession();
-
-                if (intentosRestantes <= 0) {
-                    session.setAttribute("loginError", "Cuenta bloqueada por demasiados intentos fallidos. Contacte al administrador.");
+                int intentos = reducirIntentos(conn, username, userType);
+                if (intentos <= 0) {
+                    error(request, response, "Cuenta bloqueada. Contacte al administrador.");
                 } else {
-                    session.setAttribute("loginError", "Credenciales inválidas. Te quedan " + intentosRestantes + " intentos.");
+                    error(request, response, "Credenciales inválidas. Intentos restantes: " + intentos);
                 }
-                response.sendRedirect("Plataforma.jsp");
             }
 
-        } catch (SQLException e) {
-            ErrorHandler.handle(e, response, "Error interno del sistema. Intente nuevamente más tarde.");
-        } catch (ClassNotFoundException e) {
-            ErrorHandler.handle(e, response, "Error interno al iniciar el servicio. Contacte al administrador.");
         } catch (Exception e) {
-            ErrorHandler.handle(e, response, "Ha ocurrido un error inesperado. Intente más tarde.");
+            ErrorHandler.handle(e, response, "Error interno del sistema.");
         } finally {
-            // 🔹 Cierre seguro de recursos
-            try { if (rs != null) rs.close(); } catch (SQLException e) { System.err.println("Error al cerrar ResultSet."); }
-            try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { System.err.println("Error al cerrar PreparedStatement."); }
-            try { if (cstmt != null) cstmt.close(); } catch (SQLException e) { System.err.println("Error al cerrar CallableStatement."); }
-            try { if (conn != null) conn.close(); } catch (SQLException e) { System.err.println("Error al cerrar conexión."); }
+            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
+            try { if (cstmt != null) cstmt.close(); } catch (Exception ignored) {}
+            try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
     }
 
-    // 🔸 MÉTODOS AUXILIARES
-    private boolean verificarIntentosDisponibles(Connection conn, String email, String userType) throws SQLException {
-        String tableName = getTableName(userType);
-        if (tableName == null) return false;
+    // ========================================
+    // MÉTODOS AUXILIARES
+    // ========================================
 
-        String sql = "SELECT intentos, estado FROM " + tableName + " WHERE email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    int intentos = rs.getInt("intentos");
-                    String estado = rs.getString("estado");
-                    return intentos > 0 && "activo".equals(estado);
-                }
-            }
-        }
-        return false;
-    }
-
-    private String obtenerEstadoCuenta(Connection conn, String email, String userType) throws SQLException {
-        String tableName = getTableName(userType);
-        if (tableName == null) return null;
-
-        String sql = "SELECT estado FROM " + tableName + " WHERE email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) return rs.getString("estado");
-            }
-        }
-        return null;
-    }
-
-    private int reducirIntentos(Connection conn, String email, String userType) throws SQLException {
-        String tableName = getTableName(userType);
-        if (tableName == null) return 0;
-
-        String updateSql = "UPDATE " + tableName + " SET intentos = intentos - 1 WHERE email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
-            pstmt.setString(1, email);
-            pstmt.executeUpdate();
-        }
-
-        String selectSql = "SELECT intentos FROM " + tableName + " WHERE email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-            pstmt.setString(1, email);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    int intentosRestantes = rs.getInt("intentos");
-                    if (intentosRestantes <= 0) bloquearCuenta(conn, email, userType);
-                    return intentosRestantes;
-                }
-            }
-        }
-        return 0;
-    }
-
-    private void reiniciarIntentos(Connection conn, String email, String userType) throws SQLException {
-        String tableName = getTableName(userType);
-        if (tableName == null) return;
-
-        String sql = "UPDATE " + tableName + " SET intentos = 3 WHERE email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            pstmt.executeUpdate();
-        }
-    }
-
-    private void bloquearCuenta(Connection conn, String email, String userType) throws SQLException {
-        String tableName = getTableName(userType);
-        if (tableName == null) return;
-
-        String sql = "UPDATE " + tableName + " SET estado = 'inactivo' WHERE email = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            pstmt.executeUpdate();
-        }
+    private void error(HttpServletRequest req, HttpServletResponse resp, String msg) throws IOException {
+        HttpSession session = req.getSession();
+        session.setAttribute("loginError", msg);
+        resp.sendRedirect("Plataforma.jsp");
     }
 
     private String getTableName(String userType) {
@@ -238,47 +113,97 @@ public class LoginServlet extends HttpServlet {
             case "alumno": return "alumnos";
             case "profesor": return "profesores";
             case "apoderado": return "apoderados";
-            case "admin": return "admin";
-            default: return null;
+            case "admin": return "admins"; // ⇦ CORREGIDO
         }
+        return null;
     }
 
-    private void obtenerYGuardarIdUsuario(Connection conn, HttpSession session, String username, String userType)
+    private String obtenerEstadoCuenta(Connection conn, String email, String userType) throws SQLException {
+        String table = getTableName(userType);
+        String sql = "SELECT estado FROM " + table + " WHERE email = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getString("estado");
+        return null;
+    }
+
+    private boolean verificarIntentosDisponibles(Connection conn, String email, String userType) throws SQLException {
+        String sql = "SELECT intentos FROM " + getTableName(userType) + " WHERE email = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getInt("intentos") > 0;
+        return false;
+    }
+
+    private int reducirIntentos(Connection conn, String email, String userType) throws SQLException {
+        String sql = "UPDATE " + getTableName(userType) + " SET intentos = intentos - 1 WHERE email = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email);
+        ps.executeUpdate();
+
+        sql = "SELECT intentos FROM " + getTableName(userType) + " WHERE email = ?";
+        ps = conn.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getInt("intentos");
+        return 0;
+    }
+
+    private void reiniciarIntentos(Connection conn, String email, String userType) throws SQLException {
+        String sql = "UPDATE " + getTableName(userType) + " SET intentos = 3 WHERE email = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email);
+        ps.executeUpdate();
+    }
+
+    private void obtenerYGuardarIdUsuario(Connection conn, HttpSession session, String email, String userType)
             throws SQLException {
+
         String sql = "";
-        String idAttribute = "";
+        String attr = "";
 
         switch (userType) {
             case "alumno":
                 sql = "SELECT id_alumno FROM alumnos WHERE email = ?";
-                idAttribute = "id_alumno";
+                attr = "id_alumno";
                 break;
             case "profesor":
                 sql = "SELECT id_profesor FROM profesores WHERE email = ?";
-                idAttribute = "id_profesor";
+                attr = "id_profesor";
                 break;
             case "apoderado":
                 sql = "SELECT id_apoderado FROM apoderados WHERE email = ?";
-                idAttribute = "id_apoderado";
+                attr = "id_apoderado";
                 break;
             case "admin":
-                sql = "SELECT id_admin FROM admin WHERE email = ?";
-                idAttribute = "id_admin";
+                sql = "SELECT id_admin FROM admins WHERE email = ?";
+                attr = "id_admin";
                 break;
-            default:
-                return;
         }
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    session.setAttribute(idAttribute, rs.getInt(idAttribute));
-                } else {
-                    System.err.println("No se encontró ID para el usuario " + username);
-                }
-            }
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) session.setAttribute(attr, rs.getInt(attr));
+    }
+
+    private void redirigirSegunRol(HttpServletResponse resp, String userType) throws IOException {
+        switch (userType) {
+            case "alumno":
+                resp.sendRedirect("INTERFAZ_ALUMNO/home_alumno.jsp");
+                break;
+            case "profesor":
+                resp.sendRedirect("INTERFAZ_PROFESOR/home_profesor.jsp");
+                break;
+            case "apoderado":
+                resp.sendRedirect("INTERFAZ_APODERADO/home_apoderado.jsp");
+                break;
+            case "admin":
+                resp.sendRedirect("inicio.jsp");
+                break;
         }
     }
 }
-    
