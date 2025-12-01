@@ -79,7 +79,7 @@
             </div>
             <div class="modal-body">
                 <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
-                    <input type="hidden" name="userType" value="alumno">
+                    <input type="hidden" name="userType" value="alumnos">
                     <div class="mb-3">
                         <label for="alumnoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
                         <input type="text" class="form-control" id="alumnoUsernameInput" name="username" placeholder="Ingrese su usuario" required>
@@ -119,7 +119,7 @@
             </div>
             <div class="modal-body">
                 <form action="loginServlet" method="post">
-                    <input type="hidden" name="userType" value="profesor">
+                    <input type="hidden" name="userType" value="profesores">
                     <div class="mb-3">
                         <label for="profesorUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario </label>
                         <input type="text" class="form-control" id="profesorUsernameInput" name="username" placeholder="Ingrese su usuario de profesor" required>
@@ -159,7 +159,7 @@
             </div>
             <div class="modal-body">
                 <form action="loginServlet" method="post">
-                    <input type="hidden" name="userType" value="apoderado">
+                    <input type="hidden" name="userType" value="apoderados">
                     <div class="mb-3">
                         <label for="apoderadoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
                         <input type="text" class="form-control" id="apoderadoUsernameInput" name="username" placeholder="Ingrese su usuario de apoderado" required>
