@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pe.edu.entity.Facultad; // Importar la entidad Facultad
-import pe.universidad.util.Conexion; // Asegúrate de que esta ruta sea correcta
+import pe.universidad.util.Conection; // Asegúrate de que esta ruta sea correcta
 
 public class FacultadDao implements DaoCrud<Facultad> {
 
@@ -18,7 +18,7 @@ public class FacultadDao implements DaoCrud<Facultad> {
     public LinkedList<Facultad> listar() {
         LinkedList<Facultad> lista = new LinkedList<>();        
         try {
-            Conexion c = new Conexion();
+            Conection c = new Conection();
             Connection cnx = c.conecta();
 
             CallableStatement cs = cnx.prepareCall("{call sp_listar_facultades()}");
@@ -44,7 +44,7 @@ public class FacultadDao implements DaoCrud<Facultad> {
     @Override
     public void insertar(Facultad obj) {
         try {
-            Conexion c = new Conexion();
+            Conection c = new Conection();
         Connection cnx = c.conecta();
 
         // Excluimos 'id' porque es AUTO_INCREMENT
@@ -71,7 +71,7 @@ public class FacultadDao implements DaoCrud<Facultad> {
     public Facultad leer(String id) { // El ID de la facultad se muestra como String en tu tabla
         Facultad facultad = null;       
         try {
-            Conexion c = new Conexion();
+            Conection c = new Conection();
             Connection cnx = c.conecta();
 
             CallableStatement cs = cnx.prepareCall("{call sp_obtener_facultad(?)}");
@@ -102,7 +102,7 @@ public class FacultadDao implements DaoCrud<Facultad> {
     public void editar(Facultad obj) {
         Connection cnx = null;
         try {
-            Conexion c = new Conexion();
+            Conection c = new Conection();
             cnx = c.conecta();
             CallableStatement cs = cnx.prepareCall("{call sp_editar_facultad(?,?)}");
             cs.setString(1, obj.getIdFacultad());
@@ -127,7 +127,7 @@ public class FacultadDao implements DaoCrud<Facultad> {
         Connection cnx = null;
         PreparedStatement sentencia = null;
         try {
-            Conexion c = new Conexion();
+            Conection c = new Conection();
             cnx = c.conecta();
             String query = "DELETE FROM facultades WHERE id_facultad=?"; // Columnas de tu tabla
             sentencia = cnx.prepareStatement(query);
