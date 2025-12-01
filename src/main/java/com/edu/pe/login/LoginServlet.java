@@ -45,10 +45,14 @@ public class LoginServlet extends HttpServlet {
             }
 
             // Validar intentos restantes
-            if (!verificarIntentosDisponibles(conn, username, userType)) {
-                error(request, response, "Has superado el número de intentos. Tu cuenta ha sido bloqueada.");
+            int intentos = obtenerIntentos(conn, username, userType);
+
+            if (intentos <= 0) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, 
+                    "Tu cuenta está bloqueada por intentos fallidos.");
                 return;
             }
+
 
             // === CONSULTAR PASSWORD HASH ===
             String sql = "SELECT password FROM " + getTableName(userType) + " WHERE email = ?";
@@ -81,12 +85,14 @@ public class LoginServlet extends HttpServlet {
                 redirigirSegunRol(response, userType);
 
             } else {
-                int intentos = reducirIntentos(conn, username, userType);
+                intentos = reducirIntentos(conn, username, userType);
                 if (intentos <= 0) {
-                    error(request, response, "Cuenta bloqueada. Contacte al administrador.");
-                } else {
-                    error(request, response, "Credenciales inválidas. Intentos restantes: " + intentos);
-                }
+                response.sendError(403, "Cuenta bloqueada por intentos fallidos.");
+                return;
+            }
+
+            error(request, response, "Credenciales inválidas. Intentos restantes: " + intentos);
+
             }
 
         } catch (Exception e) {
@@ -205,5 +211,14 @@ public class LoginServlet extends HttpServlet {
                 resp.sendRedirect("inicio.jsp");
                 break;
         }
+    }
+    
+    private int obtenerIntentos(Connection conn, String email, String userType) throws SQLException {
+    String sql = "SELECT intentos FROM " + getTableName(userType) + " WHERE email = ?";
+    PreparedStatement ps = conn.prepareStatement(sql);
+    ps.setString(1, email);
+    ResultSet rs = ps.executeQuery();
+    if (rs.next()) return rs.getInt("intentos");
+    return 0;
     }
 }
