@@ -116,9 +116,9 @@ public class LoginServlet extends HttpServlet {
 
     private String getTableName(String userType) {
         switch (userType) {
-            case "alumnos": return "alumnos";
-            case "profesores": return "profesores";
-            case "apoderados": return "apoderados";
+            case "alumno": return "alumnos";
+            case "profesor": return "profesores";
+            case "apoderado": return "apoderados";
             case "admin": return "admin"; // ⇦ CORREGIDO
         }
         return null;
