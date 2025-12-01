@@ -33,7 +33,6 @@
                                 profesor.setEmail(profesorExistente.getEmail());
                                 profesor.setIdFacultad(profesorExistente.getIdFacultad());
                                 profesor.setRol(profesorExistente.getRol());
-                                profesor.setPassword(profesorExistente.getPassword());                               
                             }
                         }
                     %>
@@ -83,11 +82,6 @@
                                     <input type="text" name="rol" class="form-control" readonly="true"
                                            value="<jsp:getProperty name="profesor" property="rol"></jsp:getProperty>"><br>
 
-                                    <%-- Campo Password (solo lectura) --%>
-                                    Password <br>
-                                    <input type="text" name="password" class="form-control" readonly="true"
-                                           value="<jsp:getProperty name="profesor" property="password"></jsp:getProperty>"><br>
-                                    
                                     <a href="listado.jsp" class="btn btn-danger">Volver al Listado</a>
                                     <%-- El botón "Aceptar" no tiene una función aquí, ya que es solo para ver. 
                                          Se podría quitar o cambiar a un botón de "Cerrar" --%>

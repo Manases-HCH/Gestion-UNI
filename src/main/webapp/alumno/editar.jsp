@@ -109,12 +109,6 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Password</label>
-                                    <input type="text" name="password" class="form-control"
-                                           value="<%= alumno.getPassword() %>">
-                                </div>
-
                                 <div class="d-flex justify-content-center mt-4">
                                     <a href="listado.jsp" class="btn btn-secondary me-3">
                                         <i class="fas fa-arrow-left me-1"></i>Cancelar
