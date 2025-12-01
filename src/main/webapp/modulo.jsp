@@ -78,7 +78,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
+                <form action="https://gestion-uni.onrender.com/loginServlet" method="post" onsubmit="return secureHashPassword(this)">
                     <input type="hidden" name="userType" value="alumno">
                     <div class="mb-3">
                         <label for="alumnoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
@@ -118,7 +118,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post">
+               <form action="https://gestion-uni.onrender.com/loginServlet" method="post" onsubmit="return secureHashPassword(this)">
                     <input type="hidden" name="userType" value="profesor">
                     <div class="mb-3">
                         <label for="profesorUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario </label>
@@ -158,7 +158,7 @@
                 <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="loginServlet" method="post">
+                <form action="https://gestion-uni.onrender.com/loginServlet" method="post" onsubmit="return secureHashPassword(this)">
                     <input type="hidden" name="userType" value="apoderado">
                     <div class="mb-3">
                         <label for="apoderadoUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario</label>
