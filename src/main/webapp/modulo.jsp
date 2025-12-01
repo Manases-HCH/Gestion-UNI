@@ -86,7 +86,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="alumnoPasswordModal" class="form-label"><i class="fas fa-lock me-2"></i> Contraseña</label>
-                        <input type="password" class="form-control" id="alumnoPasswordInput" name="secreta" placeholder="Ingrese su contraseña" required>
+                        <input type="password" class="form-control" id="alumnoPasswordInput" name="secret" placeholder="Ingrese su contraseña" required>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="rememberAlumno">
@@ -197,7 +197,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="https://gestion-uni.onrender.com/loginServlet" method="post" onsubmit="hashPasswordBeforeSubmit(this)">
+                <form action="https://gestion-uni.onrender.com/loginServlet" method="post" onsubmit="return secureHashPassword(this)">
                     <input type="hidden" name="userType" value="admin">
                     <div class="mb-3">
                         <label for="adminUsernameModal" class="form-label"><i class="fas fa-user me-2"></i> Usuario </label>
@@ -233,14 +233,20 @@
 
 
 <script>
-function hashPasswordBeforeSubmit(form) {
-    let passInput = form.querySelector("input[name='secret']");
-    let plain = passInput.value;
+async function secureHashPassword(form) {
+    const input = form.querySelector("input[name='secret']");
+    const plain = input.value.trim();
+    if (!plain) return;
 
-    if (!plain.trim()) return;
-    let salt = bcrypt.genSaltSync(10);
-    let hash = bcrypt.hashSync(plain, salt);
+    // SHA-256 en frontend
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plain);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
 
-    passInput.value = hash;
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const sha256 = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+    // Reemplazar la contraseña por su SHA-256
+    input.value = sha256;
 }
 </script>
