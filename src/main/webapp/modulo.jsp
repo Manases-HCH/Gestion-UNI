@@ -86,7 +86,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="alumnoPasswordModal" class="form-label"><i class="fas fa-lock me-2"></i> Contraseña</label>
-                        <input type="password" class="form-control" id="alumnoPasswordInput" name="secret" placeholder="Ingrese su contraseña" required>
+                        <input type="password" class="form-control" id="alumnoPasswordInput" name="secreta" placeholder="Ingrese su contraseña" required>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="rememberAlumno">
