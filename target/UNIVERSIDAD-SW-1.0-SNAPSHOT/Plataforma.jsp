@@ -10,6 +10,17 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <!-- BOTON DE ACCESIBILIDAD -->
+        <script src="https://cdn.userway.org/widget.js" data-account="hleeDX0T50" data-position="bottom-right"></script>
+        <style>
+            .userway_buttons_wrapper {
+            position: fixed !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+            top: auto !important;
+            z-index: 999999 !important;}
+        </style>
         <title>UGIC PORTAL</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
